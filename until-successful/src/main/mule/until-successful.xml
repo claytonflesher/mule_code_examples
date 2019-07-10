@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="051bd887-d565-4f13-a7e9-b1d37f573471" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="until-successfulFlow" doc:id="7c2ec375-8635-40d5-8962-8c8a59ca6878" >
+		<http:listener doc:name="Listener" doc:id="6f8d4d48-164a-494f-944d-cf44f6b6b975" config-ref="HTTP_Listener_config" path="/test"/>
+		<first-successful doc:name="First Successful" doc:id="2520ca0a-e4ba-4feb-9da7-a83f32f236ba" >
+			<route >
+				<raise-error doc:name="Raise error" doc:id="19a0d35d-862b-4601-a1ef-1f5d109224e9" type="MULE:EXPRESSION"/>
+			</route>
+			<route >
+				<flow-ref doc:name="Flow Reference" doc:id="07bda386-6626-4d62-8aac-cc55bea4077f" name="until-successfulFlow1"/>
+			</route>
+			<route >
+				<flow-ref doc:name="Flow Reference" doc:id="d42f6361-1805-47ce-a6ce-f42f60e42eab" name="until-successfulFlow2"/>
+			</route>
+		</first-successful>
+	</flow>
+	<flow name="until-successfulFlow1" doc:id="11b0450c-6f2b-4480-9e8f-200bb596cebd" >
+		<ee:transform doc:name="Transform Message" doc:id="11b0ac5a-d5f1-444e-8399-be6052df3205" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: "Went down second path."
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="until-successfulFlow2" doc:id="5b8a41cc-e894-4d0b-9f59-2ac7b0a24d62" >
+		<ee:transform doc:name="Transform Message" doc:id="bbd72e84-9ccc-45cf-ad6c-f36523f6a860" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: "went down third path"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

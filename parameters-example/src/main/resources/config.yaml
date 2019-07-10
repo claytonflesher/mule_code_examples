@@ -1,0 +1,6 @@
+http:
+  port: "8081"
+  
+properties:
+  example: "This is from the file"
+  secret: "This should be secret"

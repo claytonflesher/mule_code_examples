@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="new-test-suite.xml" />
+	<munit:test name="getFlightsTest" description="Test" doc:id="d87867ac-d17a-4e38-baa3-725815104442" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="db:select" doc:id="cb678c16-a3ac-4d9e-a91f-94d6cbc41efc" processor="db:select">
+				<munit-tools:then-return >
+					<munit-tools:payload value='#[output application/java
+---
+[
+  {
+    ID: 1 as Number {class: "java.lang.Integer"},
+    code1: "ER3" as String {class: "java.lang.String"},
+    code2: "8sd" as String {class: "java.lang.String"},
+    airlineName: "American" as String {class: "java.lang.String"},
+    toAirport: "SFO" as String {class: "java.lang.String"},
+    fromAirport: "MUA" as String {class: "java.lang.String"},
+    takeOffDate: |2016-03-20| as Date {class: "java.time.LocalDate"},
+    price: 400 as Number {class: "java.lang.Integer"},
+    planeType: "Boeing 737" as String {class: "java.lang.String"},
+    seatsAvailable: 0 as Number {class: "java.lang.Integer"},
+    totalSeats: 150 as Number {class: "java.lang.Integer"}
+  } as Object {class: "java.util.LinkedHashMap"},
+    {
+    ID: 2 as Number {class: "java.lang.Integer"},
+    code1: "ER4" as String {class: "java.lang.String"},
+    code2: "5if" as String {class: "java.lang.String"},
+    airlineName: "American" as String {class: "java.lang.String"},
+    toAirport: "LAX" as String {class: "java.lang.String"},
+    fromAirport: "MUA" as String {class: "java.lang.String"},
+    takeOffDate: |2016-02-11| as Date {class: "java.time.LocalDate"},
+    price: 345.99 as Number {class: "java.lang.Double"},
+    planeType: "Boeing 777" as String {class: "java.lang.String"},
+    seatsAvailable: 52 as Number {class: "java.lang.Integer"},
+    totalSeats: 300 as Number {class: "java.lang.Integer"}
+  } as Object {class: "java.util.LinkedHashMap"}
+] as Array {encoding: "UTF-8", mediaType: "*/*", mimeType: "*/*", class: "java.util.ArrayList"}]' mediaType="application/java" encoding="UTF-8"/>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to getFlights" doc:id="8261d27a-0a92-4a75-b211-c5e0f7cd6821" name="getFlights"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that payload matches expected value" doc:id="9c9fd4eb-72ab-433c-b335-395c296351a8" expression='#[import diff from dw::util::Diff
+var expected = [
+  {
+    "ID": 1,
+    "code": "ER38sd",
+    "price": 400,
+    "departureDate": "2016-03-20",
+    "origin": "MUA",
+    "destination": "SFO",
+    "emptySeats": 0,
+    "plane": {
+      "type": "Boeing 737",
+      "totalSeats": 150
+    }
+  },
+  {
+    "ID": 2,
+    "code": "ER45if",
+    "price": 345.99,
+    "departureDate": "2016-02-11",
+    "origin": "MUA",
+    "destination": "LAX",
+    "emptySeats": 52,
+    "plane": {
+      "type": "Boeing 777",
+      "totalSeats": 300
+    }
+  }
+]
+output application/java
+---
+diff(payload, expected, {unordered: true})]' is='#[MunitTools::equalTo({matches: true, diffs: []})]'/>
+			<munit-tools:verify-call doc:name="db:select" doc:id="194e4dea-c946-4a48-869c-0ca10a0e48df" processor="db:select" times="1"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="getFlightsByIDTest" description="Test" doc:id="5a1b226a-c8a4-4301-9285-fed1b3330efb" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="db:select" doc:id="de41e8ce-af6b-4824-9c10-39810a0a2bec" processor="db:select">
+				<munit-tools:then-return >
+					<munit-tools:payload value='#[output application/java
+---
+[
+  {
+    ID: 1 as Number {class: "java.lang.Integer"},
+    code1: "abc" as String {class: "java.lang.String"},
+    code2: "123" as String {class: "java.lang.String"},
+    airlineName: "American" as String {class: "java.lang.String"},
+    toAirport: "SFO" as String {class: "java.lang.String"},
+    fromAirport: "MUA" as String {class: "java.lang.String"},
+    takeOffDate: |2003-10-01| as Date {class: "java.time.LocalDate"},
+    price: 199.99 as Number {class: "java.lang.Double"},
+    planeType: "Boeing 737" as String {class: "java.lang.String"},
+    seatsAvailable: 2 as Number {class: "java.lang.Integer"},
+    totalSeats: 150 as Number {class: "java.lang.Integer"}
+  } as Object {class: "java.util.LinkedHashMap"}
+] as Array {encoding: "UTF-8", mediaType: "*/*", mimeType: "*/*", class: "java.util.ArrayList"}]' mediaType="application/java" encoding="UTF-8" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to getFlightsByID" doc:id="ae1517ab-2c45-4b20-b7b7-2715e9a5f661" name="getFlightsByID"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="payload matches expected value" doc:id="ad22bcc2-dc5f-49a8-9a5d-e4b07d46fd52" is="#[MunitTools::equalTo({matches: true, diffs: []})]" expression='#[import diff from dw::util::Diff
+
+var expected =
+[
+  {
+    "ID": 1,
+    "code": "abc123",
+    "price": 199.99,
+    "origin": "MUA",
+    "destination": "SFO",
+    "departureDate": "2003-10-01",
+    "emptySeats": 2,
+    "plane": {
+      "type": "Boeing 737",
+      "totalSeats": 150
+    }
+  }
+]
+
+output application/java
+---
+diff(payload, expected, {unordered: true})]'/>
+			<munit-tools:verify-call doc:name="db:select" doc:id="dda580f4-12a9-4cb9-9171-deee4486d15c" processor="db:select" times="1"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="postFlightTest" description="Test" doc:id="197a2031-d27f-4d0e-8197-320efceabdcf" >
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to postFlight" doc:id="6323c75f-ec9a-4bf9-a195-188f80d7958f" name="postFlight"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="payload matches expected value" doc:id="43a6e2f9-eb7b-4c89-a0e4-5f47067a0657" expression="#[payload]" is='#[MunitTools::equalTo({message: "Flight added (but not really)"})]'/>
+		</munit:validation>
+	</munit:test>
+
+</mule>
